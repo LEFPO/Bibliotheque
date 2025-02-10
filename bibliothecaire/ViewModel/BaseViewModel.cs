@@ -12,6 +12,7 @@ namespace bibliothecaire.ViewModel
         public BaseViewModel()
         {
             _databaseService = new DatabaseService();
+            //TODO organiser tous les VM avec la Base
         }
         
         public string GetVersion()
