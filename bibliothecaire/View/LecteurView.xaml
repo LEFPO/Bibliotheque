@@ -1,0 +1,25 @@
+﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="bibliothecaire.View.LecteurView">
+
+    <StackLayout Padding="20">
+        <Grid ColumnDefinitions="Auto, *">
+            <Image Source="{Binding ImageLecteur}" WidthRequest="150" HeightRequest="150"/>
+            <StackLayout Grid.Column="1">
+                <Label Text="Données du lecteur" FontSize="18" FontAttributes="Bold"/>
+                <Label Text="{Binding Nom}"/>
+                <Label Text="{Binding Prenom}"/>
+                <Label Text="{Binding Email}"/>
+                <Label Text="{Binding Telephone}"/>
+                <Label Text="{Binding Adresse}"/>
+            </StackLayout>
+        </Grid>
+
+        <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Margin="10">
+            <Button Text="Historique" Command="{Binding VoirHistoriqueCommand}" />
+            <Button Text="Ajouter" Command="{Binding AjouterLecteurCommand}" />
+            <Button Text="Modifier" Command="{Binding ModifierLecteurCommand}" />
+            <Button Text="Supprimer" Command="{Binding SupprimerLecteurCommand}" />
+        </StackLayout>
+    </StackLayout>
+</ContentPage>

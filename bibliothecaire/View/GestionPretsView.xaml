@@ -1,0 +1,51 @@
+﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="bibliothecaire.View.GestionPretsView"
+             BackgroundColor="Black">
+
+    <StackLayout Padding="20" Spacing="15">
+        
+        <!-- Boutons pour basculer entre Livres et Lecteurs -->
+        <Grid ColumnDefinitions="*,*" HeightRequest="50">
+            <Button Text="📚 Livres" Command="{Binding AfficherLivresCommand}" BackgroundColor="Purple" TextColor="White"/>
+            <Button Text="👤 Lecteurs" Command="{Binding AfficherLecteursCommand}" BackgroundColor="Purple" TextColor="White" Grid.Column="1"/>
+        </Grid>
+
+        <!-- Barre de recherche -->
+        <Entry Placeholder="Rechercher..." 
+               Text="{Binding RechercheTexte, Mode=TwoWay}"
+               TextColor="White"
+               BackgroundColor="Gray"
+               TextChanged="OnSearchTextChanged"/>
+
+        <!-- Liste des Livres -->
+        <CollectionView ItemsSource="{Binding LivresFiltres}" IsVisible="{Binding AfficherLivres}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame BackgroundColor="Black" Padding="10" CornerRadius="10">
+                        <StackLayout>
+                            <Label Text="{Binding Titre}" TextColor="White" FontAttributes="Bold"/>
+                            <Label Text="{Binding Auteur}" TextColor="Gray"/>
+                        </StackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Liste des Lecteurs -->
+        <CollectionView ItemsSource="{Binding LecteursFiltres}" IsVisible="{Binding AfficherLecteurs}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame BackgroundColor="Black" Padding="10" CornerRadius="10">
+                        <StackLayout>
+                            <Label Text="{Binding Nom}" TextColor="White" FontAttributes="Bold"/>
+                            <Label Text="{Binding Prenom}" TextColor="Gray"/>
+                        </StackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Button Text="test" Command="{Binding GoToBackCommand}"/>
+    </StackLayout>
+</ContentPage>

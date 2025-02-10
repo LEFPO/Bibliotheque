@@ -1,0 +1,47 @@
+﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="bibliothecaire.View.PretView"
+             BackgroundColor="#F0F0F0"
+             Title="Gestion des Prêts">
+
+    <StackLayout Padding="20" Spacing="15">
+
+        <!-- Recherche et Boutons -->
+        <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto" Padding="10">
+            <Entry Placeholder="Rechercher un prêt..." 
+                   Text="{Binding RechercheTexte}" 
+                   WidthRequest="250"
+                   BackgroundColor="White"
+                   TextColor="Black"/>
+            <Button Text="Filtrer" Command="{Binding FiltrerCommand}" Grid.Column="1"/>
+        </Grid>
+
+        <!-- Liste des prêts -->
+        <ListView ItemsSource="{Binding ListePrets}" 
+                  SelectedItem="{Binding PretSelectionne, Mode=TwoWay}"
+                  HasUnevenRows="True">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <Frame Padding="10" Margin="5" BackgroundColor="White">
+                            <StackLayout>
+                                <Label Text="Livre ID : {Binding IdLivre}" FontAttributes="Bold" FontSize="18"/>
+                                <Label Text="Lecteur ID : {Binding IdLecteur}" FontSize="14" TextColor="Gray"/>
+                                <Label Text="Date du prêt : {Binding DatePret, StringFormat='{0:dd/MM/yyyy}'}" FontSize="14" TextColor="Gray"/>
+                                <Label Text="Date retour : {Binding DateRetourPret, StringFormat='{0:dd/MM/yyyy}'}" FontSize="14" TextColor="Gray"/>
+                                <Label Text="Statut : {Binding Statut}" FontSize="14" TextColor="Gray"/>
+                            </StackLayout>
+                        </Frame>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <!-- Boutons d'action -->
+        <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="20">
+            <Button Text="Ajouter" Command="{Binding AjouterPretCommand}" BackgroundColor="Green" TextColor="White"/>
+            <Button Text="Supprimer" Command="{Binding SupprimerPretCommand}" BackgroundColor="Red" TextColor="White"/>
+        </StackLayout>
+
+    </StackLayout>
+</ContentPage>

@@ -1,0 +1,35 @@
+<Shell
+    x:Class="bibliothecaire.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:view="clr-namespace:bibliothecaire.View"
+    Shell.FlyoutBehavior="Disabled"
+    Title="bibliothecaire">
+
+    <!-- 🔹 Page de connexion (Page de démarrage) -->
+    <ShellContent Route="LoginView" 
+                  Title="Connexion" 
+                  ContentTemplate="{DataTemplate view:LoginView}" />
+
+    <!-- 🔹 Ajout des routes explicites pour la navigation -->
+    <ShellContent Route="GestionPretsView"
+                  Title="Gestion des Prêts" 
+                  ContentTemplate="{DataTemplate view:GestionPretsView}" />
+
+    <ShellContent Route="PretView" 
+                  Title="Prêts" 
+                  ContentTemplate="{DataTemplate view:PretView}" />
+
+    <ShellContent Route="LivreView" 
+                  Title="Livres" 
+                  ContentTemplate="{DataTemplate view:LivreView}" />
+
+    <ShellContent Route="LecteurView" 
+                  Title="Lecteurs" 
+                  ContentTemplate="{DataTemplate view:LecteurView}" />
+
+    <ShellContent Route="AssocierPretView" 
+                  Title="Associer Prêt" 
+                  ContentTemplate="{DataTemplate view:AssocierPretView}" />
+
+</Shell>

@@ -1,0 +1,71 @@
+﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="bibliothecaire.View.LoginView"
+             BackgroundColor="#1E1E1E">
+
+    <Grid VerticalOptions="Center" Padding="30">
+
+        <!-- Cadre de connexion -->
+        <Frame Padding="20"
+               HasShadow="True"
+               BackgroundColor="#2D2D2D"
+               HorizontalOptions="Center"
+               VerticalOptions="Center"
+               WidthRequest="350">
+
+            <StackLayout Spacing="15">
+
+                <!-- Titre -->
+                <Label Text="Connexion"
+                       FontSize="26"
+                       FontAttributes="Bold"
+                       TextColor="White"
+                       HorizontalOptions="Center"/>
+
+                <!-- Champ Identifiant -->
+                <StackLayout Orientation="Horizontal">
+                    <Image Source="user_icon.png"
+                           HeightRequest="24"
+                           WidthRequest="24"
+                           VerticalOptions="Center"
+                           Margin="5"/>
+                    <Entry Placeholder="Entrez votre identifiant"
+                           Text="{Binding Identifiant}"
+                           BackgroundColor="#3A3A3A"
+                           TextColor="White"
+                           PlaceholderColor="Gray"
+                           WidthRequest="250"/>
+                </StackLayout>
+
+                <!-- Champ Mot de passe -->
+                <StackLayout Orientation="Horizontal">
+                    <Image Source="password_icon.png"
+                           HeightRequest="24"
+                           WidthRequest="24"
+                           VerticalOptions="Center"
+                           Margin="5"/>
+                    <Entry Placeholder="Entrez votre mot de passe"
+                           Text="{Binding MotDePasse}"
+                           IsPassword="True"
+                           BackgroundColor="#3A3A3A"
+                           TextColor="White"
+                           PlaceholderColor="Gray"
+                           WidthRequest="250"/>
+                </StackLayout>
+
+                <!-- Bouton Se Connecter -->
+                <Button Text="Se connecter"
+                        Command="{Binding SeConnecterCommand}"
+                        BackgroundColor="#8A2BE2"
+                        TextColor="White"
+                        FontAttributes="Bold"
+                        WidthRequest="200"
+                        HorizontalOptions="Center"/>
+
+
+            </StackLayout>
+
+        </Frame>
+
+    </Grid>
+</ContentPage>
