@@ -4,8 +4,8 @@ namespace bibliothecaire.Model
 {
     public enum StatutLivre
     {
-        EnStock,
-        Emprunté
+        EnStock = 0,
+        Emprunté = 1
     }
 
     public class Livre : INotifyPropertyChanged
@@ -26,7 +26,7 @@ namespace bibliothecaire.Model
             Auteur = auteur;
             Genre = genre;
             DatePublication = datePublication;
-            Statut = StatutLivre.EnStock; // Par défaut, un livre est disponible
+            Statut = StatutLivre.EnStock;
         }
 
         public int IdLivre
@@ -44,15 +44,10 @@ namespace bibliothecaire.Model
             get => _titre;
             set
             {
-                if (CheckRequiredField(value) && CheckLength(value, 100))
-                {
-                    _titre = value;
-                    OnPropertyChanged(nameof(Titre));
-                }
-                else
-                {
-                    throw new ArgumentException("Le titre ne peut pas être vide et doit contenir moins de 100 caractères.");
-                }
+                if (string.IsNullOrWhiteSpace(value) || value.Length > 100)
+                    throw new ArgumentException("Le titre est obligatoire et doit contenir moins de 100 caractères.");
+                _titre = value;
+                OnPropertyChanged(nameof(Titre));
             }
         }
 
@@ -61,15 +56,10 @@ namespace bibliothecaire.Model
             get => _auteur;
             set
             {
-                if (CheckRequiredField(value) && CheckLength(value, 50))
-                {
-                    _auteur = value;
-                    OnPropertyChanged(nameof(Auteur));
-                }
-                else
-                {
-                    throw new ArgumentException("L'auteur ne peut pas être vide et doit contenir moins de 50 caractères.");
-                }
+                if (string.IsNullOrWhiteSpace(value) || value.Length > 50)
+                    throw new ArgumentException("L'auteur est obligatoire et doit contenir moins de 50 caractères.");
+                _auteur = value;
+                OnPropertyChanged(nameof(Auteur));
             }
         }
 
@@ -78,15 +68,10 @@ namespace bibliothecaire.Model
             get => _genre;
             set
             {
-                if (CheckRequiredField(value) && CheckLength(value, 30))
-                {
-                    _genre = value;
-                    OnPropertyChanged(nameof(Genre));
-                }
-                else
-                {
-                    throw new ArgumentException("Le genre ne peut pas être vide et doit contenir moins de 30 caractères.");
-                }
+                if (string.IsNullOrWhiteSpace(value) || value.Length > 30)
+                    throw new ArgumentException("Le genre est obligatoire et doit contenir moins de 30 caractères.");
+                _genre = value;
+                OnPropertyChanged(nameof(Genre));
             }
         }
 
@@ -112,34 +97,22 @@ namespace bibliothecaire.Model
             }
         }
 
-        // Marquer le livre comme emprunté
-        public void Emprunter()
+        public bool EstValide(out string messageErreur)
         {
-            if (Statut == StatutLivre.Emprunté)
-                throw new InvalidOperationException("Ce livre est déjà emprunté.");
-            
-            Statut = StatutLivre.Emprunté;
-        }
-
-        // Marquer le livre comme retourné
-        public void Retourner()
-        {
-            if (Statut == StatutLivre.EnStock)
-                throw new InvalidOperationException("Ce livre est déjà disponible.");
-            
-            Statut = StatutLivre.EnStock;
-        }
-
-        // Vérifie si une chaîne n'est pas vide
-        private bool CheckRequiredField(string value)
-        {
-            return !string.IsNullOrWhiteSpace(value);
-        }
-
-        // Vérifie la longueur d'une chaîne
-        private bool CheckLength(string value, int maxLength)
-        {
-            return value.Length <= maxLength;
+            messageErreur = "";
+            try
+            {
+                _ = Titre;
+                _ = Auteur;
+                _ = Genre;
+                _ = DatePublication;
+                return true;
+            }
+            catch (ArgumentException ex)
+            {
+                messageErreur = ex.Message;
+                return false;
+            }
         }
 
         protected virtual void OnPropertyChanged(string propertyName)

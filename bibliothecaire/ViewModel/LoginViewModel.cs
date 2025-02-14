@@ -1,25 +1,22 @@
 ﻿using System.Diagnostics;
-using System.Windows.Input;
 using bibliothecaire.Services;
-using bibliothecaire.View;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Maui.Controls;
 
 namespace bibliothecaire.ViewModel
 {
     public partial class LoginViewModel : BaseViewModel
     {
+        public LoginViewModel(DatabaseService databaseService) : base(databaseService) { }
+
         [ObservableProperty]
         private string identifiant = "jdupont";
 
         [ObservableProperty]
         private string motDePasse = "motdepasse123";
-        
-        public LoginViewModel()
-        {
-            
-        }
+
+        [ObservableProperty]
+        private string messageErreur; // ✅ Propriété pour afficher les erreurs
 
         [RelayCommand]
         private async Task SeConnecterAsync()
@@ -31,16 +28,24 @@ namespace bibliothecaire.ViewModel
                 if (string.IsNullOrWhiteSpace(Identifiant) || string.IsNullOrWhiteSpace(MotDePasse))
                 {
                     Debug.WriteLine("❌ Identifiant ou mot de passe vide !");
-                    await Application.Current.MainPage.DisplayAlert("Erreur",
-                        "Veuillez entrer un identifiant et un mot de passe.", "OK");
+                    MessageErreur = "Veuillez entrer un identifiant et un mot de passe.";
                     return;
                 }
 
-                bool estValide = _databaseService.VerifierConnexion(Identifiant, MotDePasse);
+                // ✅ Nouvelle façon de vérifier la connexion avec la requête SQL directe
+                string requete = "SELECT COUNT(*) FROM bibliothecaire WHERE identifiant = @identifiant AND mot_de_passe = @motDePasse";
+                var parametres = new Dictionary<string, object>
+                {
+                    { "@identifiant", Identifiant },
+                    { "@motDePasse", MotDePasse }
+                };
+
+                bool estValide = _databaseService.ExecuterRequete(requete, parametres);
 
                 if (estValide)
                 {
                     Debug.WriteLine("✅ Connexion réussie ! Navigation en cours...");
+                    MessageErreur = ""; // ✅ Supprime l'erreur en cas de succès
 
                     if (Shell.Current != null)
                     {
@@ -50,21 +55,19 @@ namespace bibliothecaire.ViewModel
                     else
                     {
                         Debug.WriteLine("❌ Shell.Current est NULL !");
-                        await Application.Current.MainPage.DisplayAlert("Erreur",
-                            "Problème de navigation : Shell est null.", "OK");
+                        MessageErreur = "Problème de navigation : Shell est null.";
                     }
                 }
                 else
                 {
                     Debug.WriteLine("❌ Identifiants incorrects !");
-                    await Application.Current.MainPage.DisplayAlert("Erreur", "Identifiants incorrects.", "OK");
+                    MessageErreur = "Identifiants incorrects.";
                 }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"❌ ERREUR CONNEXION : {ex.Message}");
-                await Application.Current.MainPage.DisplayAlert("Erreur",
-                    $"Problème lors de la connexion : {ex.Message}", "OK");
+                MessageErreur = $"Problème lors de la connexion : {ex.Message}";
             }
         }
     }

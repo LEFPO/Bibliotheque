@@ -1,0 +1,42 @@
+﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="bibliothecaire.View.AjoutView"
+             BackgroundColor="#00000088"> 
+
+    <Grid VerticalOptions="Center" Padding="30">
+        <Frame BackgroundColor="White" Padding="20" CornerRadius="15" WidthRequest="350">
+            <StackLayout Spacing="15">
+
+                <!-- Boutons pour choisir entre Livre et Lecteur -->
+                <Grid ColumnDefinitions="*,*" HeightRequest="50">
+                    <Button Text="📚 Livre" Command="{Binding BasculerLivreCommand}" BackgroundColor="{Binding AjouterLivre, Converter={StaticResource BooleanToColor}}" TextColor="White"/>
+                    <Button Text="👤 Lecteur" Command="{Binding BasculerLecteurCommand}" BackgroundColor="{Binding AjouterLecteur, Converter={StaticResource BooleanToColor}}" TextColor="White" Grid.Column="1"/>
+                </Grid>
+
+                <!-- Champs pour Livre -->
+                <StackLayout IsVisible="{Binding AjouterLivre}">
+                    <Entry Placeholder="Titre" Text="{Binding Titre}" />
+                    <Entry Placeholder="Auteur" Text="{Binding Auteur}" />
+                    <Entry Placeholder="Genre" Text="{Binding Genre}" />
+                    <DatePicker Date="{Binding DatePublication}" />
+                </StackLayout>
+
+                <!-- Champs pour Lecteur -->
+                <StackLayout IsVisible="{Binding AjouterLecteur}">
+                    <Entry Placeholder="Nom" Text="{Binding Nom}" />
+                    <Entry Placeholder="Prénom" Text="{Binding Prenom}" />
+                    <Entry Placeholder="Téléphone" Text="{Binding Telephone}" />
+                    <Entry Placeholder="Email" Text="{Binding Email}" />
+                    <Entry Placeholder="Adresse" Text="{Binding Adresse}" />
+                </StackLayout>
+
+                <!-- Bouton Valider -->
+                <Button Text="✅ Ajouter" Command="{Binding AjouterCommand}" BackgroundColor="Green" TextColor="White"/>
+
+                <!-- Bouton Fermer -->
+                <Button Text="❌ Annuler" Command="{Binding FermerCommand}" BackgroundColor="Red" TextColor="White"/>
+
+            </StackLayout>
+        </Frame>
+    </Grid>
+</ContentPage>

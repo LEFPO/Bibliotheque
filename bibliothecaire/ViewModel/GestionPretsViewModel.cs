@@ -5,6 +5,7 @@ using bibliothecaire.Model;
 using bibliothecaire.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Maui.Controls;
 
 namespace bibliothecaire.ViewModel
 {
@@ -12,47 +13,98 @@ namespace bibliothecaire.ViewModel
     {
         private readonly DatabaseService _databaseService;
 
-        [ObservableProperty]
-        private string rechercheTexte = string.Empty;
+        [ObservableProperty] private string rechercheTexte = string.Empty;
+        [ObservableProperty] private bool afficherLivres = true;
+        [ObservableProperty] private bool afficherLecteurs = false;
 
-        [ObservableProperty]
-        private bool afficherLivres = true;
+        [ObservableProperty] private Livre livreSelectionne;
+        [ObservableProperty] private Lecteur lecteurSelectionne;
 
-        [ObservableProperty]
-        private bool afficherLecteurs = false;
-
-        public ObservableCollection<Livre> Livres { get; set; }
-        public ObservableCollection<Lecteur> Lecteurs { get; set; }
-        public ObservableCollection<Livre> LivresFiltres { get; set; }
-        public ObservableCollection<Lecteur> LecteursFiltres { get; set; }
+        public ObservableCollection<Livre> Livres { get; set; } = new();
+        public ObservableCollection<Lecteur> Lecteurs { get; set; } = new();
+        public ObservableCollection<Livre> LivresFiltres { get; set; } = new();
+        public ObservableCollection<Lecteur> LecteursFiltres { get; set; } = new();
 
         public ICommand AfficherLivresCommand { get; }
         public ICommand AfficherLecteursCommand { get; }
+        public ICommand AjouterCommand { get; }
+        public ICommand ModifierCommand { get; }
+        public ICommand SupprimerCommand { get; }
 
-        public GestionPretsViewModel()
+        // ✅ Correction : Injection de DatabaseService
+        public GestionPretsViewModel(DatabaseService databaseService) : base(databaseService)
         {
-            _databaseService = new DatabaseService();
+            _databaseService = databaseService;
 
+            ChargerDonnees();
+
+            AfficherLivresCommand = new RelayCommand(() => SetAfficherLivres(true));
+            AfficherLecteursCommand = new RelayCommand(() => SetAfficherLecteurs(true));
+            AjouterCommand = new RelayCommand(Ajouter);
+            ModifierCommand = new RelayCommand(Modifier);
+            SupprimerCommand = new RelayCommand(Supprimer);
+        }
+
+        private void ChargerDonnees()
+        {
             Livres = _databaseService.ObtenirLivres();
             Lecteurs = _databaseService.ObtenirLecteurs();
 
             LivresFiltres = new ObservableCollection<Livre>(Livres);
             LecteursFiltres = new ObservableCollection<Lecteur>(Lecteurs);
+        }
 
-            AfficherLivresCommand = new RelayCommand(() => SetAfficherLivres(true));
-            AfficherLecteursCommand = new RelayCommand(() => SetAfficherLecteurs(true));
+        private async void Ajouter()
+        {
+            await Shell.Current.GoToAsync(nameof(View.AjoutView));
+        }
+
+        private async void Modifier()
+        {
+            if (AfficherLivres && LivreSelectionne != null)
+            {
+                var param = new Dictionary<string, object> { { "LivreSelectionne", LivreSelectionne } };
+                await Shell.Current.GoToAsync(nameof(View.PopupModifierView), param);
+            }
+            else if (AfficherLecteurs && LecteurSelectionne != null)
+            {
+                var param = new Dictionary<string, object> { { "LecteurSelectionne", LecteurSelectionne } };
+                await Shell.Current.GoToAsync(nameof(View.PopupModifierView), param);
+            }
+        }
+
+        private void Supprimer()
+        {
+            if (AfficherLivres && LivreSelectionne != null)
+            {
+                bool success = _databaseService.SupprimerLivre(LivreSelectionne.IdLivre);
+                if (success)
+                {
+                    Livres.Remove(LivreSelectionne);
+                    LivresFiltres.Remove(LivreSelectionne);
+                    LivreSelectionne = null;
+                }
+            }
+            else if (AfficherLecteurs && LecteurSelectionne != null)
+            {
+                bool success = _databaseService.SupprimerLecteur(LecteurSelectionne.IdLecteur);
+                if (success)
+                {
+                    Lecteurs.Remove(LecteurSelectionne);
+                    LecteursFiltres.Remove(LecteurSelectionne);
+                    LecteurSelectionne = null;
+                }
+            }
         }
 
         public void SetAfficherLivres(bool actif)
         {
             if (actif)
             {
-                afficherLivres = true;
-                afficherLecteurs = false;
+                AfficherLivres = true;
+                AfficherLecteurs = false;
                 RechercheTexte = string.Empty;
                 AppliquerFiltre();
-                OnPropertyChanged(nameof(AfficherLivres));
-                OnPropertyChanged(nameof(AfficherLecteurs));
             }
         }
 
@@ -60,12 +112,10 @@ namespace bibliothecaire.ViewModel
         {
             if (actif)
             {
-                afficherLivres = false;
-                afficherLecteurs = true;
+                AfficherLivres = false;
+                AfficherLecteurs = true;
                 RechercheTexte = string.Empty;
                 AppliquerFiltre();
-                OnPropertyChanged(nameof(AfficherLivres));
-                OnPropertyChanged(nameof(AfficherLecteurs));
             }
         }
 
@@ -74,7 +124,8 @@ namespace bibliothecaire.ViewModel
             if (AfficherLivres)
             {
                 LivresFiltres.Clear();
-                foreach (var livre in Livres.Where(l => l.Titre.Contains(RechercheTexte, StringComparison.OrdinalIgnoreCase)))
+                foreach (var livre in Livres.Where(l =>
+                             l.Titre.Contains(RechercheTexte, StringComparison.OrdinalIgnoreCase)))
                 {
                     LivresFiltres.Add(livre);
                 }
@@ -82,17 +133,13 @@ namespace bibliothecaire.ViewModel
             else if (AfficherLecteurs)
             {
                 LecteursFiltres.Clear();
-                foreach (var lecteur in Lecteurs.Where(l => l.Nom.Contains(RechercheTexte, StringComparison.OrdinalIgnoreCase) || l.Prenom.Contains(RechercheTexte, StringComparison.OrdinalIgnoreCase)))
+                foreach (var lecteur in Lecteurs.Where(l =>
+                             l.Nom.Contains(RechercheTexte, StringComparison.OrdinalIgnoreCase) ||
+                             l.Prenom.Contains(RechercheTexte, StringComparison.OrdinalIgnoreCase)))
                 {
                     LecteursFiltres.Add(lecteur);
                 }
             }
-        }
-        
-        [RelayCommand]
-        public void GoToBack()
-        {
-            Shell.Current.GoToAsync("//LoginView");
         }
     }
 }

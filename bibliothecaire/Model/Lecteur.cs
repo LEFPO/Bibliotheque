@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Text.RegularExpressions;
 
 namespace bibliothecaire.Model
@@ -25,7 +24,6 @@ namespace bibliothecaire.Model
             Adresse = adresse;
         }
         
-        public Lecteur() {}
 
         public int IdLecteur
         {
@@ -42,6 +40,8 @@ namespace bibliothecaire.Model
             get => _nom;
             set
             {
+                if (string.IsNullOrWhiteSpace(value) || value.Length > 50)
+                    throw new ArgumentException("Le nom est obligatoire et doit contenir au maximum 50 caractères.");
                 _nom = value;
                 OnPropertyChanged(nameof(Nom));
             }
@@ -52,6 +52,8 @@ namespace bibliothecaire.Model
             get => _prenom;
             set
             {
+                if (string.IsNullOrWhiteSpace(value) || value.Length > 50)
+                    throw new ArgumentException("Le prénom est obligatoire et doit contenir au maximum 50 caractères.");
                 _prenom = value;
                 OnPropertyChanged(nameof(Prenom));
             }
@@ -62,11 +64,8 @@ namespace bibliothecaire.Model
             get => _telephone;
             set
             {
-                if (!string.IsNullOrEmpty(value) && !Regex.IsMatch(value, @"^(\+33|0)[1-9]\d{8}$"))
-                {
-                    Console.WriteLine($"⚠ Erreur : Numéro invalide ({value}). Valeur ignorée.");
-                    value = "Non défini"; // Remplace le numéro invalide par un placeholder
-                }
+                if (!string.IsNullOrEmpty(value) && !Regex.IsMatch(value, @"^(\+32|0)[1-9]\d{8}$"))
+                    throw new ArgumentException("Format du téléphone invalide. Il doit être sous la forme +32xxxxxxxxx ou 0xxxxxxxxx.");
 
                 _telephone = value;
                 OnPropertyChanged(nameof(Telephone));
@@ -78,6 +77,8 @@ namespace bibliothecaire.Model
             get => _email;
             set
             {
+                if (!string.IsNullOrEmpty(value) && !Regex.IsMatch(value, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+                    throw new ArgumentException("Format d'email invalide.");
                 _email = value;
                 OnPropertyChanged(nameof(Email));
             }
@@ -88,8 +89,29 @@ namespace bibliothecaire.Model
             get => _adresse;
             set
             {
+                if (string.IsNullOrWhiteSpace(value) || value.Length > 100)
+                    throw new ArgumentException("L'adresse est obligatoire et doit contenir au maximum 100 caractères.");
                 _adresse = value;
                 OnPropertyChanged(nameof(Adresse));
+            }
+        }
+
+        public bool EstValide(out string messageErreur)
+        {
+            messageErreur = "";
+            try
+            {
+                _ = Nom;
+                _ = Prenom;
+                _ = Telephone;
+                _ = Email;
+                _ = Adresse;
+                return true;
+            }
+            catch (ArgumentException ex)
+            {
+                messageErreur = ex.Message;
+                return false;
             }
         }
 

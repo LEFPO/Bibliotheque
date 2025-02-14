@@ -64,4 +64,24 @@
         <PackageReference Include="Npgsql" Version="9.0.2" />
     </ItemGroup>
 
+    <ItemGroup>
+      <MauiXaml Update="View\AjoutView.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
+      <MauiXaml Update="View\PopupModifierView.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="View\AjoutView.xaml.cs">
+        <DependentUpon>AjoutView.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="View\PopupModifierView.xaml.cs">
+        <DependentUpon>PopupModifierView.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+    </ItemGroup>
+
 </Project>

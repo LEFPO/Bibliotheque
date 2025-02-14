@@ -1,4 +1,5 @@
 ﻿using bibliothecaire.ViewModel;
+using Microsoft.Maui.Controls;
 
 namespace bibliothecaire.View
 {
@@ -6,10 +7,10 @@ namespace bibliothecaire.View
     {
         private GestionPretsViewModel _viewModel;
 
-        public GestionPretsView()
+        public GestionPretsView(GestionPretsViewModel viewModel)
         {
             InitializeComponent();
-            _viewModel = new GestionPretsViewModel();
+            _viewModel = viewModel;
             BindingContext = _viewModel;
         }
 

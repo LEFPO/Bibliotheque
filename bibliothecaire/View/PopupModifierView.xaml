@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="bibliothecaire.View.PopupModifierView"
+             BackgroundColor="Transparent"
+             Shell.BackgroundColor="Transparent"
+             Padding="0">
+    
+    <AbsoluteLayout BackgroundColor="#80000000"> <!-- Fond semi-transparent -->
+        
+        <Frame BackgroundColor="White"
+               Padding="20"
+               CornerRadius="15"
+               WidthRequest="300"
+               HeightRequest="400"
+               Opacity="0.95" 
+               AbsoluteLayout.LayoutBounds="0.5, 0.5, AutoSize, AutoSize"
+               AbsoluteLayout.LayoutFlags="PositionProportional">
+            
+            <VerticalStackLayout Spacing="15">
+                
+                <!-- Titre -->
+                <Label Text="Modifier l'élément sélectionné"
+                       FontSize="18"
+                       FontAttributes="Bold"
+                       TextColor="Black"
+                       HorizontalOptions="Center"/>
+                
+                <!-- Champs de saisie -->
+                <Entry Placeholder="Titre ou Nom"
+                       Text="{Binding NomOuTitre, Mode=TwoWay}"
+                       BackgroundColor="LightGray"
+                       TextColor="Black"/>
+
+                <Entry Placeholder="Auteur ou Prénom"
+                       Text="{Binding AuteurOuPrenom, Mode=TwoWay}"
+                       BackgroundColor="LightGray"
+                       TextColor="Black"/>
+
+                <Entry Placeholder="Genre ou Téléphone"
+                       Text="{Binding GenreOuTelephone, Mode=TwoWay}"
+                       BackgroundColor="LightGray"
+                       TextColor="Black"/>
+                
+                <!-- Boutons -->
+                <Button Text="✅ Enregistrer" Command="{Binding EnregistrerCommand}" BackgroundColor="Green" TextColor="White"/>
+                <Button Text="❌ Annuler" Command="{Binding FermerCommand}" BackgroundColor="Red" TextColor="White"/>
+
+            </VerticalStackLayout>
+        </Frame>
+        
+    </AbsoluteLayout>
+
+</ContentPage>
