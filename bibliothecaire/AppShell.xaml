@@ -16,20 +16,4 @@
                   Title="Gestion des Prêts" 
                   ContentTemplate="{DataTemplate view:GestionPretsView}" />
 
-    <ShellContent Route="PretView" 
-                  Title="Prêts" 
-                  ContentTemplate="{DataTemplate view:PretView}" />
-
-    <ShellContent Route="LivreView" 
-                  Title="Livres" 
-                  ContentTemplate="{DataTemplate view:LivreView}" />
-
-    <ShellContent Route="LecteurView" 
-                  Title="Lecteurs" 
-                  ContentTemplate="{DataTemplate view:LecteurView}" />
-
-    <ShellContent Route="AssocierPretView" 
-                  Title="Associer Prêt" 
-                  ContentTemplate="{DataTemplate view:AssocierPretView}" />
-
 </Shell>
