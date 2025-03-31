@@ -1,11 +1,11 @@
 ﻿using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows.Input;
 using bibliothecaire.Model;
 using bibliothecaire.Services;
+using bibliothecaire.View;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Maui.Controls;
+using CommunityToolkit.Maui.Views;
 
 namespace bibliothecaire.ViewModel
 {
@@ -20,16 +20,18 @@ namespace bibliothecaire.ViewModel
         [ObservableProperty] private Livre livreSelectionne;
         [ObservableProperty] private Lecteur lecteurSelectionne;
 
-        public ObservableCollection<Livre> Livres { get; set; } = new();
-        public ObservableCollection<Lecteur> Lecteurs { get; set; } = new();
-        public ObservableCollection<Livre> LivresFiltres { get; set; } = new();
-        public ObservableCollection<Lecteur> LecteursFiltres { get; set; } = new();
+        [ObservableProperty] private ObservableCollection<Livre> livres = new();
+        [ObservableProperty] private ObservableCollection<Lecteur> lecteurs = new();
+        [ObservableProperty] private ObservableCollection<Livre> livresFiltres = new();
+        [ObservableProperty] private ObservableCollection<Lecteur> lecteursFiltres = new();
 
         public ICommand AfficherLivresCommand { get; }
         public ICommand AfficherLecteursCommand { get; }
         public ICommand AjouterCommand { get; }
         public ICommand ModifierCommand { get; }
         public ICommand SupprimerCommand { get; }
+        
+        public ICommand FairePretCommand { get; }
 
         // ✅ Correction : Injection de DatabaseService
         public GestionPretsViewModel(DatabaseService databaseService) : base(databaseService)
@@ -43,35 +45,74 @@ namespace bibliothecaire.ViewModel
             AjouterCommand = new RelayCommand(Ajouter);
             ModifierCommand = new RelayCommand(Modifier);
             SupprimerCommand = new RelayCommand(Supprimer);
+            FairePretCommand = new RelayCommand(FairePret);
         }
 
-        private void ChargerDonnees()
+        public void ChargerDonnees()
         {
-            Livres = _databaseService.ObtenirLivres();
-            Lecteurs = _databaseService.ObtenirLecteurs();
+            Livres.Clear();
+            foreach (var livre in _databaseService.ObtenirLivres())
+            {
+                Livres.Add(livre);
+            }
 
-            LivresFiltres = new ObservableCollection<Livre>(Livres);
-            LecteursFiltres = new ObservableCollection<Lecteur>(Lecteurs);
+            LivresFiltres.Clear();
+            foreach (var livre in Livres)
+            {
+                LivresFiltres.Add(livre);
+            }
+
+            Lecteurs.Clear();
+            foreach (var lecteur in _databaseService.ObtenirLecteurs())
+            {
+                Lecteurs.Add(lecteur);
+            }
+
+            LecteursFiltres.Clear();
+            foreach (var lecteur in Lecteurs)
+            {
+                LecteursFiltres.Add(lecteur);
+            }
         }
 
         private async void Ajouter()
         {
-            await Shell.Current.GoToAsync(nameof(View.AjoutView));
+            await Shell.Current.GoToAsync(nameof(AjoutView));
         }
 
-        private async void Modifier()
+
+
+
+        private void Modifier()
         {
             if (AfficherLivres && LivreSelectionne != null)
             {
-                var param = new Dictionary<string, object> { { "LivreSelectionne", LivreSelectionne } };
-                await Shell.Current.GoToAsync(nameof(View.PopupModifierView), param);
+                var popup = new PopupModifierView();
+                popup.BindingContext = new PopupModifierViewModel(_databaseService, LivreSelectionne, () =>
+                {
+                    popup.Close();
+                });
+
+                Application.Current.MainPage.ShowPopup(popup);
             }
             else if (AfficherLecteurs && LecteurSelectionne != null)
             {
-                var param = new Dictionary<string, object> { { "LecteurSelectionne", LecteurSelectionne } };
-                await Shell.Current.GoToAsync(nameof(View.PopupModifierView), param);
+                var popup = new PopupModifierView();
+                popup.BindingContext = new PopupModifierViewModel(_databaseService, LecteurSelectionne, () =>
+                {
+                    popup.Close();
+                });
+
+                Application.Current.MainPage.ShowPopup(popup);
+            }
+            else
+            {
+                Application.Current.MainPage.DisplayAlert("Erreur", "Aucun élément sélectionné.", "OK");
             }
         }
+
+
+
 
         private void Supprimer()
         {
@@ -141,5 +182,19 @@ namespace bibliothecaire.ViewModel
                 }
             }
         }
+        
+        private async void FairePret()
+        {
+            try
+            {
+                await Application.Current.MainPage.DisplayAlert("Test", "Le bouton fonctionne bien !", "OK");
+                await Shell.Current.GoToAsync(nameof(PretView));
+            }
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert("Erreur", $"Exception : {ex.Message}", "OK");
+            }
+        }
+
     }
 }

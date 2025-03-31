@@ -9,25 +9,26 @@
 
                 <!-- Boutons pour choisir entre Livre et Lecteur -->
                 <Grid ColumnDefinitions="*,*" HeightRequest="50">
-                    <Button Text="📚 Livre" Command="{Binding BasculerLivreCommand}" BackgroundColor="{Binding AjouterLivre, Converter={StaticResource BooleanToColor}}" TextColor="White"/>
-                    <Button Text="👤 Lecteur" Command="{Binding BasculerLecteurCommand}" BackgroundColor="{Binding AjouterLecteur, Converter={StaticResource BooleanToColor}}" TextColor="White" Grid.Column="1"/>
+                    <Button Text="📚 Livre" Command="{Binding BasculerLivreCommand}" BackgroundColor="{Binding CouleurLivre}" TextColor="White"/>
+                    <Button Text="👤 Lecteur" Command="{Binding BasculerLecteurCommand}" BackgroundColor="{Binding CouleurLecteur}" TextColor="White" Grid.Column="1"/>
+
                 </Grid>
 
                 <!-- Champs pour Livre -->
                 <StackLayout IsVisible="{Binding AjouterLivre}">
-                    <Entry Placeholder="Titre" Text="{Binding Titre}" />
-                    <Entry Placeholder="Auteur" Text="{Binding Auteur}" />
-                    <Entry Placeholder="Genre" Text="{Binding Genre}" />
-                    <DatePicker Date="{Binding DatePublication}" />
+                    <Entry Placeholder="Titre" Text="{Binding Titre}" TextColor="Black"/>
+                    <Entry Placeholder="Auteur" Text="{Binding Auteur}" TextColor="Black"/>
+                    <Entry Placeholder="Genre" Text="{Binding Genre}" TextColor="Black"/>
+                    <DatePicker Date="{Binding DatePublication}" TextColor="Black"/>
                 </StackLayout>
 
                 <!-- Champs pour Lecteur -->
-                <StackLayout IsVisible="{Binding AjouterLecteur}">
-                    <Entry Placeholder="Nom" Text="{Binding Nom}" />
-                    <Entry Placeholder="Prénom" Text="{Binding Prenom}" />
-                    <Entry Placeholder="Téléphone" Text="{Binding Telephone}" />
-                    <Entry Placeholder="Email" Text="{Binding Email}" />
-                    <Entry Placeholder="Adresse" Text="{Binding Adresse}" />
+                <StackLayout IsVisible="{Binding AjouterLecteur}" >
+                    <Entry Placeholder="Nom" Text="{Binding Nom}" TextColor="Black"/>
+                    <Entry Placeholder="Prénom" Text="{Binding Prenom}" TextColor="Black"/>
+                    <Entry Placeholder="Téléphone" Text="{Binding Telephone}" TextColor="Black"/>
+                    <Entry Placeholder="Email" Text="{Binding Email}" TextColor="Black"/>
+                    <Entry Placeholder="Adresse" Text="{Binding Adresse}" TextColor="Black"/>
                 </StackLayout>
 
                 <!-- Bouton Valider -->

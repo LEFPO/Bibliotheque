@@ -1,14 +1,11 @@
-﻿using bibliothecaire.ViewModel;
-using Microsoft.Maui.Controls;
+﻿using Popup = CommunityToolkit.Maui.Views.Popup;
 
-namespace bibliothecaire.View
+namespace bibliothecaire.View;
+
+public partial class PopupModifierView : Popup
 {
-    public partial class PopupModifierView : ContentPage
+    public PopupModifierView()
     {
-        public PopupModifierView(PopupModifierViewModel viewModel)
-        {
-            InitializeComponent();
-            BindingContext = viewModel;
-        }
+        InitializeComponent();
     }
 }

@@ -271,13 +271,81 @@ namespace bibliothecaire.Services
             catch (PostgresException ex)
             {
                 Debug.WriteLine($"❌ Erreur SQL : {ex.Message}");
+                Application.Current?.MainPage?.DisplayAlert("Erreur SQL", ex.Message, "OK"); // ✅ Affichage de l'erreur SQL
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"❌ Erreur inconnue : {ex.Message}");
+                Application.Current?.MainPage?.DisplayAlert("Erreur", ex.Message, "OK"); // ✅ Affichage de l'erreur générale
             }
 
             return false;
         }
+        
+        public ObservableCollection<Pret> ObtenirPrets()
+        {
+            var listePrets = new ObservableCollection<Pret>();
+
+            using var conn = new NpgsqlConnection(_connectionString);
+            conn.Open();
+
+            using var cmd = new NpgsqlCommand("SELECT id_pret, id_livre, id_lecteur, date_pret, date_retour, statut FROM pret", conn);
+            using var reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                listePrets.Add(new Pret(
+                    reader.GetInt32(0), // id_pret
+                    reader.GetInt32(1), // id_livre
+                    reader.GetInt32(2), // id_lecteur
+                    reader.GetDateTime(3), // date_pret
+                    reader.GetDateTime(4)  // date_retour
+                ));
+            }
+            return listePrets;
+        }
+
+        public void AjouterPret(Pret pret)
+        {
+            using var conn = new NpgsqlConnection(_connectionString);
+            conn.Open();
+
+            string sql = "INSERT INTO pret (id_livre, id_lecteur, date_pret, date_retour, statut) VALUES (@idLivre, @idLecteur, @datePret, @dateRetour, @statut)";
+            using var cmd = new NpgsqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@idLivre", pret.IdLivre);
+            cmd.Parameters.AddWithValue("@idLecteur", pret.IdLecteur);
+            cmd.Parameters.AddWithValue("@datePret", new DateTime(pret.DatePret.Year, pret.DatePret.Month, pret.DatePret.Day)); 
+            cmd.Parameters.AddWithValue("@dateRetour", new DateTime(pret.DateRetourPret.Year, pret.DateRetourPret.Month, pret.DateRetourPret.Day)); 
+            cmd.Parameters.AddWithValue("@statut", pret.Statut.ToString());
+
+            cmd.ExecuteNonQuery();
+        }
+
+        public void ModifierPret(Pret pret)
+        {
+            using var conn = new NpgsqlConnection(_connectionString);
+            conn.Open();
+
+            string sql = "UPDATE pret SET date_retour = @dateRetour, statut = @statut WHERE id_pret = @idPret";
+            using var cmd = new NpgsqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@dateRetour", new DateTime(pret.DateRetourPret.Year, pret.DateRetourPret.Month, pret.DateRetourPret.Day));
+            cmd.Parameters.AddWithValue("@statut", pret.Statut.ToString());
+            cmd.Parameters.AddWithValue("@statut", pret.Statut.ToString());
+            cmd.Parameters.AddWithValue("@idPret", pret.IdPret);
+
+            cmd.ExecuteNonQuery();
+        }
+
+        public void SupprimerPret(int idPret)
+        {
+            using var conn = new NpgsqlConnection(_connectionString);
+            conn.Open();
+
+            using var cmd = new NpgsqlCommand("DELETE FROM pret WHERE id_pret = @id", conn);
+            cmd.Parameters.AddWithValue("@id", idPret);
+            cmd.ExecuteNonQuery();
+        }
+
+
     }
 }

@@ -15,5 +15,8 @@
     <ShellContent Route="GestionPretsView"
                   Title="Gestion des Prêts" 
                   ContentTemplate="{DataTemplate view:GestionPretsView}" />
+    <ShellContent Route="PretView" 
+                  ContentTemplate="{DataTemplate view:PretView}" />
+
 
 </Shell>

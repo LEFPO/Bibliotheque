@@ -7,10 +7,10 @@ namespace bibliothecaire.View
     {
         public AjoutView(AjoutViewModel viewModel)
         {
-            Debug.WriteLine("🔹 Chargement de AjoutView...");
             InitializeComponent();
-            Debug.WriteLine("✅ AjoutView chargé avec succès !");
-            BindingContext = viewModel; // ✅ Injection correcte
+            BindingContext = viewModel;
         }
     }
+
+
 }

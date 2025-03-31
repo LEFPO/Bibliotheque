@@ -14,8 +14,8 @@ namespace bibliothecaire.Model
         public event PropertyChangedEventHandler PropertyChanged;
 
         private int _idPret;
-        private DateOnly _datePret;
-        private DateOnly _dateRetourPret;
+        private DateTime _datePret;
+        private DateTime _dateRetourPret;
         private StatutPret _statut;
         
         private DateTime _dateEmprunt;
@@ -24,7 +24,7 @@ namespace bibliothecaire.Model
         private int _idLivre;
         private int _idLecteur;
 
-        public Pret(int idPret, int idLivre, int idLecteur, DateOnly datePret, DateOnly dateRetourPret)
+        public Pret(int idPret, int idLivre, int idLecteur, DateTime datePret, DateTime dateRetourPret)
         {
             IdPret = idPret;
             IdLivre = idLivre;
@@ -64,19 +64,19 @@ namespace bibliothecaire.Model
             }
         }
 
-        public DateOnly DatePret
+        public DateTime DatePret
         {
             get => _datePret;
             set
             {
-                if (value > DateOnly.FromDateTime(DateTime.Now))
+                if (value > DateTime.Now)
                     throw new ArgumentException("La date de prêt ne peut pas être dans le futur.");
                 _datePret = value;
                 OnPropertyChanged(nameof(DatePret));
             }
         }
 
-        public DateOnly DateRetourPret
+        public DateTime DateRetourPret
         {
             get => _dateRetourPret;
             set
@@ -110,7 +110,7 @@ namespace bibliothecaire.Model
         // Vérifier si le prêt est en retard
         public void VerifierRetard()
         {
-            if (DateOnly.FromDateTime(DateTime.Now) > DateRetourPret)
+            if (DateTime.Now > DateRetourPret)
             {
                 Statut = StatutPret.EnRetard;
             }

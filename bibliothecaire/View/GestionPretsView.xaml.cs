@@ -1,4 +1,5 @@
-﻿using bibliothecaire.ViewModel;
+﻿using System.Diagnostics;
+using bibliothecaire.ViewModel;
 using Microsoft.Maui.Controls;
 
 namespace bibliothecaire.View
@@ -18,5 +19,15 @@ namespace bibliothecaire.View
         {
             _viewModel.AppliquerFiltre();
         }
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            if (BindingContext is GestionPretsViewModel viewModel)
+            {
+                viewModel.ChargerDonnees(); // 🔹 Recharge les données à chaque fois qu'on revient sur la page
+            }
+        }
+
+
     }
 }

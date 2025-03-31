@@ -54,6 +54,17 @@
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
+        
+        <Button
+            Text="📚 Faire un prêt"
+            Command="{Binding FairePretCommand}"
+            BackgroundColor="DarkBlue"
+            TextColor="White"
+            FontAttributes="Bold"
+            CornerRadius="10"
+            Padding="10"
+            HorizontalOptions="Center"/>
+
 
     </StackLayout>
 </ContentPage>

@@ -4,16 +4,22 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using bibliothecaire.Model;
 using bibliothecaire.Services;
+using bibliothecaire.ViewModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Maui;
 using Microsoft.Maui.Controls;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace bibliothecaire.ViewModel
 {
     public partial class AjoutViewModel : ObservableObject
     {
         private readonly DatabaseService _databaseService;
-        private readonly Action _fermerPopup;
+        private readonly IServiceProvider _serviceProvider; // ✅ Injection de ServiceProvider
+
+        public Color CouleurLivre => AjouterLivre ? Colors.Green : Colors.Gray;
+        public Color CouleurLecteur => AjouterLecteur ? Colors.Green : Colors.Gray;
 
         [ObservableProperty] private bool ajouterLivre = true;
         [ObservableProperty] private bool ajouterLecteur = false;
@@ -31,13 +37,13 @@ namespace bibliothecaire.ViewModel
         [ObservableProperty] private string email = string.Empty;
         [ObservableProperty] private string adresse = string.Empty;
 
-        public AjoutViewModel(DatabaseService databaseService, Action fermerPopup)
+        public AjoutViewModel(DatabaseService databaseService, IServiceProvider serviceProvider)
         {
             _databaseService = databaseService;
-            _fermerPopup = fermerPopup;
+            _serviceProvider = serviceProvider; // ✅ Utilisation de ServiceProvider
 
             AjouterCommand = new AsyncRelayCommand(AjouterAsync);
-            FermerCommand = new RelayCommand(Fermer);
+            FermerCommand = new AsyncRelayCommand(Fermer);
             BasculerLivreCommand = new RelayCommand(() => BasculerAjout(true));
             BasculerLecteurCommand = new RelayCommand(() => BasculerAjout(false));
         }
@@ -52,6 +58,9 @@ namespace bibliothecaire.ViewModel
             try
             {
                 Debug.WriteLine("🔹 Début de l'ajout...");
+
+                // ✅ Récupération du ViewModel via IServiceProvider
+                var gestionPretsViewModel = _serviceProvider.GetRequiredService<GestionPretsViewModel>();
 
                 if (AjouterLivre)
                 {
@@ -69,6 +78,14 @@ namespace bibliothecaire.ViewModel
                     if (success)
                     {
                         Debug.WriteLine("✅ Livre ajouté avec succès !");
+                        
+                        // ✅ Mise à jour de l'UI en temps réel
+                        MainThread.BeginInvokeOnMainThread(() =>
+                        {
+                            gestionPretsViewModel.Livres.Add(nouveauLivre);
+                            gestionPretsViewModel.LivresFiltres.Add(nouveauLivre);
+                        });
+
                         await Application.Current.MainPage.DisplayAlert("Succès", "Livre ajouté avec succès !", "OK");
                     }
                     else
@@ -93,6 +110,14 @@ namespace bibliothecaire.ViewModel
                     if (success)
                     {
                         Debug.WriteLine("✅ Lecteur ajouté avec succès !");
+                        
+                        // ✅ Mise à jour de l'UI en temps réel
+                        MainThread.BeginInvokeOnMainThread(() =>
+                        {
+                            gestionPretsViewModel.Lecteurs.Add(nouveauLecteur);
+                            gestionPretsViewModel.LecteursFiltres.Add(nouveauLecteur);
+                        });
+
                         await Application.Current.MainPage.DisplayAlert("Succès", "Lecteur ajouté avec succès !", "OK");
                     }
                     else
@@ -102,7 +127,7 @@ namespace bibliothecaire.ViewModel
                     }
                 }
 
-                Fermer();
+                await Fermer();
             }
             catch (Exception ex)
             {
@@ -111,8 +136,10 @@ namespace bibliothecaire.ViewModel
             }
         }
 
-
-        private void Fermer() => _fermerPopup.Invoke();
+        private async Task Fermer()
+        {
+            await Shell.Current.GoToAsync("..");
+        }
 
         private void BasculerAjout(bool ajouterLivre)
         {
