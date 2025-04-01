@@ -1,0 +1,23 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=2e31a7a2_002Ddb31_002D42ce_002Da193_002Dfcabceda441e/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Test1" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::76C77B6A-EC00-4F9A-92CF-1CDB4428632F::net8.0::TestProjectBibli.UnitTest1.Test1&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=2f318e7c_002D770d_002D4be0_002D8d60_002Dac28521fc40b/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="BibliothecaireGlobalTests #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::76C77B6A-EC00-4F9A-92CF-1CDB4428632F::net8.0::TestProjectBibli.UnitTest1.Test1&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=5377c60b_002D76bc_002D459a_002Db35e_002Df93ae9b89e05/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="BibliothecaireGlobalTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::AED531E3-CA25-43D2-B8B7-A8344A42E13E::net8.0-windows10.0.19041.0::Bibliothecaire.Tests.BibliothecaireGlobalTests&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=d6d02585_002Df062_002D4fc9_002D82d7_002D416d1336ec9f/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Test1 #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::76C77B6A-EC00-4F9A-92CF-1CDB4428632F::net8.0::TestProjectBibli.UnitTest1&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::76C77B6A-EC00-4F9A-92CF-1CDB4428632F::net8.0::Bibliothecaire.Tests.TestBibliothecaire&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::76C77B6A-EC00-4F9A-92CF-1CDB4428632F::net8.0::Bibliothecaire.Tests.TestPret&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
