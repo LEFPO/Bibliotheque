@@ -2,34 +2,57 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="bibliothecaire.View.PretView"
              BackgroundColor="Black">
+    <ScrollView>
+        <StackLayout Padding="20" Spacing="15">
+            <Label Text="Gestion des prêts"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   TextColor="White"
+                   HorizontalOptions="Center"/>
+            
+            <Label Text="Sélectionnez un livre" TextColor="White"/>
+            <Picker ItemsSource="{Binding Livres}"
+                    ItemDisplayBinding="{Binding Titre}"
+                    SelectedItem="{Binding LivreSelectionne}" />
 
-    <StackLayout Padding="20" Spacing="15">
-        <Label Text="Gestion des prêts"
-               FontSize="24"
-               FontAttributes="Bold"
-               TextColor="White"
-               HorizontalOptions="Center"/>
+            <Label Text="Sélectionnez un lecteur" TextColor="White"/>
+            <Picker ItemsSource="{Binding Lecteurs}"
+                    ItemDisplayBinding="{Binding Nom}"
+                    SelectedItem="{Binding LecteurSelectionne}" />
 
-        <!-- Liste des prêts -->
-        <CollectionView ItemsSource="{Binding Prets}" SelectionMode="Single" SelectedItem="{Binding PretSelectionne}">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Frame BackgroundColor="Black" Padding="10" CornerRadius="10" BorderColor="White" >
-                        <StackLayout>
-                            <Label Text="{Binding IdLivre}" TextColor="White"/>
-                            <Label Text="{Binding IdLecteur}" TextColor="Gray"/>
-                            <Label Text="{Binding DatePret}" TextColor="Gray"/>
-                            <Label Text="{Binding Statut}" TextColor="Gray"/>
-                        </StackLayout>
-                    </Frame>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+            <!-- Liste des prêts -->
+            <CollectionView ItemsSource="{Binding Prets}" SelectionMode="Single" SelectedItem="{Binding PretSelectionne}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame BackgroundColor="Black" Padding="10" CornerRadius="10" BorderColor="White" >
+                            <StackLayout>
+                                <Label Text="{Binding TitreLivre}" TextColor="White"/>
+                                <Label Text="{Binding NomLecteur}" TextColor="Gray"/>
+                                <Label Text="{Binding DatePret, StringFormat='Début : {0:dd/MM/yyyy}'}" TextColor="Gray"/>
+                                <Label Text="{Binding Statut}" TextColor="Gray"/>
 
-        <!-- Boutons -->
-        <Button Text="➕ Ajouter un prêt" Command="{Binding AjouterPretCommand}" BackgroundColor="Green" TextColor="White"/>
-        <Button Text="✏ Modifier" Command="{Binding ModifierPretCommand}" BackgroundColor="Blue" TextColor="White"/>
-        <Button Text="❌ Supprimer" Command="{Binding SupprimerPretCommand}" BackgroundColor="Red" TextColor="White"/>
+                            </StackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            
+            <Label Text="Modifier la date de retour" TextColor="White"/>
+            <DatePicker Date="{Binding DateRetour, Mode=TwoWay}" />
 
-    </StackLayout>
+            <Label Text="Modifier le statut" TextColor="White"/>
+            <Picker ItemsSource="{Binding Statuts}"
+                    SelectedItem="{Binding StatutSelectionne}"
+                    Title="Statut du prêt"
+                    TextColor="White"/>
+
+
+            <!-- Boutons -->
+            <Button Text="➕ Ajouter un prêt" Command="{Binding AjouterPretCommand}" BackgroundColor="Green" TextColor="White"/>
+            <Button Text="✏ Modifier" Command="{Binding ModifierPretCommand}" BackgroundColor="Blue" TextColor="White"/>
+            <Button Text="❌ Supprimer" Command="{Binding SupprimerPretCommand}" BackgroundColor="Red" TextColor="White"/>
+            <Button Text="⬅ Retour" Command="{Binding RetourCommand}" BackgroundColor="Gray" TextColor="White"/>
+
+        </StackLayout>
+    </ScrollView>
 </ContentPage>

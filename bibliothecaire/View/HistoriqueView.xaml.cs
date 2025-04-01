@@ -7,9 +7,9 @@ using bibliothecaire.ViewModel;
 
 namespace bibliothecaire.View;
 
-public partial class PretView : ContentPage
+public partial class HistoriqueView : ContentPage
 {
-    public PretView(PretViewModel viewModel)
+    public HistoriqueView(HistoriqueViewModel viewModel)
     {
         InitializeComponent();
         BindingContext = viewModel;
@@ -18,9 +18,9 @@ public partial class PretView : ContentPage
     {
         base.OnAppearing();
 
-        if (BindingContext is PretViewModel vm)
+        if (BindingContext is HistoriqueViewModel vm)
         {
-            vm.ChargerDonnees(); // 🔁 recharge à chaque affichage
+            vm.ChargerHistorique(); // 🔁 recharge automatique à chaque affichage
         }
     }
 }

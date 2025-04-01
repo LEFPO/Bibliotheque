@@ -1,11 +1,12 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 
 namespace bibliothecaire.Model
 {
     public enum StatutHistorique
     {
         EnCours = 0,
-        Terminé = 1,
+        Termine = 1,
         EnRetard = 2
     }
 
@@ -16,19 +17,24 @@ namespace bibliothecaire.Model
         private int _idHistorique;
         private int _idLivre;
         private int _idLecteur;
-        private DateOnly _dateEmprunt;
-        private DateOnly _dateRetour;
+        private DateTime _dateEmprunt;
+        private DateTime? _dateRetour;
         private StatutHistorique _statut;
 
-        public Historique(int idHistorique, int idLivre, int idLecteur, DateOnly dateEmprunt, DateOnly dateRetour)
+        public string TitreLivre { get; set; }
+        public string NomLecteur { get; set; }
+
+        public Historique(int idHistorique, int idLivre, int idLecteur, DateTime dateEmprunt, DateTime dateRetour)
         {
             IdHistorique = idHistorique;
             IdLivre = idLivre;
             IdLecteur = idLecteur;
             DateEmprunt = dateEmprunt;
             DateRetour = dateRetour;
-            Statut = StatutHistorique.EnCours; // Un emprunt commence toujours avec "EnCours"
+            Statut = StatutHistorique.EnCours;
         }
+
+        public Historique() { }
 
         public int IdHistorique
         {
@@ -60,28 +66,29 @@ namespace bibliothecaire.Model
             }
         }
 
-        public DateOnly DateEmprunt
+        public DateTime DateEmprunt
         {
             get => _dateEmprunt;
             set
             {
-                if (value > DateOnly.FromDateTime(DateTime.Now))
+                if (value > DateTime.Now)
                     throw new ArgumentException("La date d'emprunt ne peut pas être dans le futur.");
                 _dateEmprunt = value;
                 OnPropertyChanged(nameof(DateEmprunt));
             }
         }
 
-        public DateOnly DateRetour
+        public DateTime? DateRetour
         {
             get => _dateRetour;
             set
             {
-                if (value <= _dateEmprunt)
+                if (value.HasValue && value.Value <= _dateEmprunt)
                     throw new ArgumentException("La date de retour doit être après la date d'emprunt.");
                 _dateRetour = value;
                 OnPropertyChanged(nameof(DateRetour));
             }
+
         }
 
         public StatutHistorique Statut
@@ -94,19 +101,16 @@ namespace bibliothecaire.Model
             }
         }
 
-        // Marquer l'historique comme terminé
         public void CloturerHistorique()
         {
-            if (Statut == StatutHistorique.Terminé)
+            if (Statut == StatutHistorique.Termine)
                 throw new InvalidOperationException("Cet emprunt est déjà clôturé.");
-            
-            Statut = StatutHistorique.Terminé;
+            Statut = StatutHistorique.Termine;
         }
 
-        // Vérifier si le prêt dans l'historique est en retard
         public void VerifierRetard()
         {
-            if (DateOnly.FromDateTime(DateTime.Now) > DateRetour)
+            if (DateTime.Now > DateRetour)
             {
                 Statut = StatutHistorique.EnRetard;
             }

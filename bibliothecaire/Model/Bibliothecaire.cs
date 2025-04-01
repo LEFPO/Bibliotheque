@@ -100,7 +100,8 @@ namespace bibliothecaire.Model
                 }
             }
         }
-
+        
+        public string MotDePasseHash => _motDePasseHash;
         public bool VerifierMotDePasse(string motDePasse)
         {
             return HashPassword(motDePasse) == _motDePasseHash;

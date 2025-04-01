@@ -1,0 +1,54 @@
+﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="bibliothecaire.View.HistoriqueView"
+             BackgroundColor="Black"
+             Title="Historique des prêts">
+    <ScrollView>
+        <StackLayout Padding="20" Spacing="15">
+            <Label Text="📖 Historique des prêts"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   TextColor="White"
+                   HorizontalOptions="Center"/>
+
+            <!-- 🔍 Barre de recherche -->
+            <Entry Placeholder="Rechercher un livre ou lecteur"
+                   Text="{Binding FiltreTexte, Mode=TwoWay}"
+                   BackgroundColor="Gray"
+                   TextColor="White"/>
+
+            <!-- 📋 Liste des historiques filtrés -->
+            <CollectionView ItemsSource="{Binding HistoriqueFiltres}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame BackgroundColor="Black"
+                               BorderColor="White"
+                               CornerRadius="10"
+                               Padding="10"
+                               Margin="5">
+
+                            <StackLayout>
+                                <Label Text="{Binding TitreLivre}" TextColor="White" FontAttributes="Bold" FontSize="16"/>
+                                <Label Text="{Binding NomLecteur}" TextColor="LightGray" />
+                                <Label Text="{Binding DateEmprunt, StringFormat='📅 Emprunt : {0:dd/MM/yyyy}'}" TextColor="Gray"/>
+                                <Label Text="{Binding DateRetour, StringFormat='📆 Retour : {0:dd/MM/yyyy}'}" TextColor="Gray"/>
+                                <Label Text="{Binding Statut}" TextColor="Orange" FontAttributes="Italic"/>
+                            </StackLayout>
+
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!-- 🔙 Bouton retour -->
+            <Button Text="⬅ Retour à la gestion des prêts"
+                    Command="{Binding RetourCommand}"
+                    BackgroundColor="Gray"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    CornerRadius="10"
+                    Padding="10"
+                    HorizontalOptions="Center"/>
+        </StackLayout>
+    </ScrollView>  
+</ContentPage>

@@ -55,15 +55,9 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
         
-        <Button
-            Text="📚 Faire un prêt"
-            Command="{Binding FairePretCommand}"
-            BackgroundColor="DarkBlue"
-            TextColor="White"
-            FontAttributes="Bold"
-            CornerRadius="10"
-            Padding="10"
-            HorizontalOptions="Center"/>
+        <Button Text="📚 Faire un prêt" Command="{Binding FairePretCommand}" BackgroundColor="DarkBlue" TextColor="White" FontAttributes="Bold" CornerRadius="10" Padding="10" HorizontalOptions="Center"/>
+        <Button Text="📖 Historique" Command="{Binding OuvrirHistoriqueCommand}" BackgroundColor="Orange" TextColor="White" FontAttributes="Bold" CornerRadius="10" Padding="10" HorizontalOptions="Center"/>
+        <Button Text="🚪 Déconnexion" Command="{Binding DeconnexionCommand}" BackgroundColor="Gray" TextColor="White" FontAttributes="Bold" CornerRadius="10" Padding="10" HorizontalOptions="Center"/>
 
 
     </StackLayout>

@@ -5,7 +5,7 @@ namespace bibliothecaire.Model
     public enum StatutPret
     {
         EnCours,
-        Terminé,
+        Termine,
         EnRetard
     }
 
@@ -17,12 +17,12 @@ namespace bibliothecaire.Model
         private DateTime _datePret;
         private DateTime _dateRetourPret;
         private StatutPret _statut;
-        
         private DateTime _dateEmprunt;
-        
-
         private int _idLivre;
         private int _idLecteur;
+
+        public string TitreLivre { get; set; }
+        public string NomLecteur { get; set; }
 
         public Pret(int idPret, int idLivre, int idLecteur, DateTime datePret, DateTime dateRetourPret)
         {
@@ -101,10 +101,10 @@ namespace bibliothecaire.Model
         // Marquer le prêt comme terminé
         public void CloturerPret()
         {
-            if (Statut == StatutPret.Terminé)
+            if (Statut == StatutPret.Termine)
                 throw new InvalidOperationException("Ce prêt est déjà clôturé.");
             
-            Statut = StatutPret.Terminé;
+            Statut = StatutPret.Termine;
         }
 
         // Vérifier si le prêt est en retard

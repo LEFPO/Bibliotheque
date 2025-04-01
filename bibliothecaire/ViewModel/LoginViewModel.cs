@@ -33,14 +33,7 @@ namespace bibliothecaire.ViewModel
                 }
 
                 // ✅ Nouvelle façon de vérifier la connexion avec la requête SQL directe
-                string requete = "SELECT COUNT(*) FROM bibliothecaire WHERE identifiant = @identifiant AND mot_de_passe = @motDePasse";
-                var parametres = new Dictionary<string, object>
-                {
-                    { "@identifiant", Identifiant },
-                    { "@motDePasse", MotDePasse }
-                };
-
-                bool estValide = _databaseService.ExecuterRequete(requete, parametres);
+                bool estValide = _databaseService.ConnexionBibliothecaireValide(Identifiant, MotDePasse);
 
                 if (estValide)
                 {
@@ -68,6 +61,21 @@ namespace bibliothecaire.ViewModel
             {
                 Debug.WriteLine($"❌ ERREUR CONNEXION : {ex.Message}");
                 MessageErreur = $"Problème lors de la connexion : {ex.Message}";
+            }
+        }
+
+        [RelayCommand]
+        private async Task CreerCompte()
+        {
+            try
+            {
+                Debug.WriteLine("🔹 Navigation vers la page de création de compte...");
+                await Shell.Current.GoToAsync("//CreerBibliothecaireView"); // Assure-toi que le route est bien défini dans AppShell
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"❌ ERREUR NAVIGATION : {ex.Message}");
+                MessageErreur = $"Problème de navigation : {ex.Message}";
             }
         }
     }

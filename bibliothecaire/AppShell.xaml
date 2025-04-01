@@ -17,6 +17,10 @@
                   ContentTemplate="{DataTemplate view:GestionPretsView}" />
     <ShellContent Route="PretView" 
                   ContentTemplate="{DataTemplate view:PretView}" />
+    <ShellContent Route="CreerBibliothecaireView"
+                  ContentTemplate="{DataTemplate view:CreerBibliothecaireView}"/>
+    <ShellContent Route="HistoriqueView"
+                  ContentTemplate="{DataTemplate view:HistoriqueView}" />
 
 
 </Shell>

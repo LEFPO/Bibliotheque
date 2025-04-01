@@ -39,6 +39,9 @@ public static class MauiProgram
         builder.Services.AddTransient<AjoutViewModel>();
         builder.Services.AddTransient<PopupModifierViewModel>();
         builder.Services.AddTransient<PretViewModel>();
+        builder.Services.AddTransient<CreerBibliothecaireViewModel>();
+        builder.Services.AddTransient<HistoriqueViewModel>();
+
 
         // ✅ Enregistrer les Vues
         builder.Services.AddTransient<LoginView>();
@@ -46,6 +49,8 @@ public static class MauiProgram
         builder.Services.AddTransient<AjoutView>();
         builder.Services.AddTransient<PopupModifierView>();
         builder.Services.AddTransient<PretView>();
+        builder.Services.AddTransient<CreerBibliothecaireView>();
+        builder.Services.AddTransient<HistoriqueView>();
 
 #if DEBUG
         builder.Logging.AddDebug();

@@ -2,6 +2,8 @@
 using Npgsql;
 using bibliothecaire.Model;
 using System.Collections.ObjectModel;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace bibliothecaire.Services
 {
@@ -14,6 +16,31 @@ namespace bibliothecaire.Services
             _connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING") ??
                                 "Host=localhost;Port=5432;Database=bibliotheque_db;Username=postgres;Password=Arkana10021994";
         }
+        
+        public bool ConnexionBibliothecaireValide(string identifiant, string motDePasse)
+        {
+            using var conn = new NpgsqlConnection(_connectionString);
+            conn.Open();
+
+            string hash = HashPassword(motDePasse);
+
+            string sql = "SELECT COUNT(*) FROM bibliothecaire WHERE identifiant = @identifiant AND mot_de_passe = @motDePasse";
+            using var cmd = new NpgsqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@identifiant", identifiant);
+            cmd.Parameters.AddWithValue("@motDePasse", hash);
+
+            long count = (long)cmd.ExecuteScalar();
+            return count > 0;
+        } 
+        
+        // Tu peux même extraire la fonction de hash ici :
+        private string HashPassword(string password)
+        {
+            using var sha256 = SHA256.Create();
+            byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+            return BitConverter.ToString(bytes).Replace("-", "").ToLower();
+        }
+
 
         /// <summary>
         /// Ajoute un livre dans la base de données.
@@ -289,34 +316,53 @@ namespace bibliothecaire.Services
             using var conn = new NpgsqlConnection(_connectionString);
             conn.Open();
 
-            using var cmd = new NpgsqlCommand("SELECT id_pret, id_livre, id_lecteur, date_pret, date_retour, statut FROM pret", conn);
+            string sql = @"
+                    SELECT p.id_pret, p.id_livre, p.id_lecteur, p.date_pret, p.date_retour_pret, p.statut,
+                           l.titre AS titre_livre, le.nom AS nom_lecteur
+                    FROM pret p
+                    JOIN livres l ON p.id_livre = l.id_livre
+                    JOIN lecteurs le ON p.id_lecteur = le.id_lecteur";
+
+            using var cmd = new NpgsqlCommand(sql, conn);
             using var reader = cmd.ExecuteReader();
 
             while (reader.Read())
             {
-                listePrets.Add(new Pret(
-                    reader.GetInt32(0), // id_pret
-                    reader.GetInt32(1), // id_livre
-                    reader.GetInt32(2), // id_lecteur
-                    reader.GetDateTime(3), // date_pret
-                    reader.GetDateTime(4)  // date_retour
-                ));
+                var pret = new Pret(
+                    idPret: reader.GetInt32(0),
+                    idLivre: reader.GetInt32(1),
+                    idLecteur: reader.GetInt32(2),
+                    datePret: reader.GetDateTime(3),
+                    dateRetourPret: reader.GetDateTime(4)
+                )
+                {
+                    Statut = (StatutPret)reader.GetInt32(5),
+                    TitreLivre = reader.GetString(6),
+                    NomLecteur = reader.GetString(7)
+                };
+
+                listePrets.Add(pret);
             }
+
             return listePrets;
         }
+
 
         public void AjouterPret(Pret pret)
         {
             using var conn = new NpgsqlConnection(_connectionString);
             conn.Open();
 
-            string sql = "INSERT INTO pret (id_livre, id_lecteur, date_pret, date_retour, statut) VALUES (@idLivre, @idLecteur, @datePret, @dateRetour, @statut)";
+            string sql = "INSERT INTO pret (id_livre, id_lecteur, date_pret, date_retour_pret, date_emprunt, statut) " +
+                         "VALUES (@idLivre, @idLecteur, @datePret, @dateRetour, @dateEmprunt, @statut)";
+
             using var cmd = new NpgsqlCommand(sql, conn);
             cmd.Parameters.AddWithValue("@idLivre", pret.IdLivre);
             cmd.Parameters.AddWithValue("@idLecteur", pret.IdLecteur);
             cmd.Parameters.AddWithValue("@datePret", new DateTime(pret.DatePret.Year, pret.DatePret.Month, pret.DatePret.Day)); 
-            cmd.Parameters.AddWithValue("@dateRetour", new DateTime(pret.DateRetourPret.Year, pret.DateRetourPret.Month, pret.DateRetourPret.Day)); 
-            cmd.Parameters.AddWithValue("@statut", pret.Statut.ToString());
+            cmd.Parameters.AddWithValue("@dateRetour", new DateTime(pret.DateRetourPret.Year, pret.DateRetourPret.Month, pret.DateRetourPret.Day));
+            cmd.Parameters.AddWithValue("@dateEmprunt", DateTime.Now);
+            cmd.Parameters.AddWithValue("@statut", (int)pret.Statut);
 
             cmd.ExecuteNonQuery();
         }
@@ -326,11 +372,11 @@ namespace bibliothecaire.Services
             using var conn = new NpgsqlConnection(_connectionString);
             conn.Open();
 
-            string sql = "UPDATE pret SET date_retour = @dateRetour, statut = @statut WHERE id_pret = @idPret";
+            string sql = "UPDATE pret SET date_retour_pret = @dateRetour, statut = @statut WHERE id_pret = @idPret";
+
             using var cmd = new NpgsqlCommand(sql, conn);
             cmd.Parameters.AddWithValue("@dateRetour", new DateTime(pret.DateRetourPret.Year, pret.DateRetourPret.Month, pret.DateRetourPret.Day));
-            cmd.Parameters.AddWithValue("@statut", pret.Statut.ToString());
-            cmd.Parameters.AddWithValue("@statut", pret.Statut.ToString());
+            cmd.Parameters.AddWithValue("@statut", (int)pret.Statut);
             cmd.Parameters.AddWithValue("@idPret", pret.IdPret);
 
             cmd.ExecuteNonQuery();
@@ -345,7 +391,95 @@ namespace bibliothecaire.Services
             cmd.Parameters.AddWithValue("@id", idPret);
             cmd.ExecuteNonQuery();
         }
+        
+        public void AjouterBibliothecaire(Bibliothecaire bibliothecaire)
+        {
+            using var conn = new NpgsqlConnection(_connectionString);
+            conn.Open();
 
+            string sql = "INSERT INTO bibliothecaire (nom, prenom, identifiant, mot_de_passe) " +
+                         "VALUES (@nom, @prenom, @identifiant, @motDePasse)";
+
+            using var cmd = new NpgsqlCommand(sql, conn);
+    
+            cmd.Parameters.AddWithValue("@nom", bibliothecaire.Nom);
+            cmd.Parameters.AddWithValue("@prenom", bibliothecaire.Prenom);
+            cmd.Parameters.AddWithValue("@identifiant", bibliothecaire.Identifiant);
+            cmd.Parameters.AddWithValue("@motDePasse", bibliothecaire.MotDePasseHash); // ✅ ajout du hash
+
+            cmd.ExecuteNonQuery();
+        }
+        
+        public bool ExisteBibliothecaireParIdentifiant(string identifiant)
+        {
+            using var conn = new NpgsqlConnection(_connectionString);
+            conn.Open();
+
+            string sql = "SELECT COUNT(*) FROM bibliothecaire WHERE identifiant = @identifiant";
+            using var cmd = new NpgsqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@identifiant", identifiant);
+
+            long count = (long)cmd.ExecuteScalar(); // ExecuteScalar renvoie le COUNT(*)
+            return count > 0;
+        }
+
+        public void AjouterHistorique(Pret pret)
+        {
+            using var conn = new NpgsqlConnection(_connectionString);
+            conn.Open();
+
+            string sql = "INSERT INTO historique (id_livre, id_lecteur, date_emprunt, date_retour, statut) " +
+                         "VALUES (@idLivre, @idLecteur, @dateEmprunt, @dateRetour, @statut)";
+
+            using var cmd = new NpgsqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@idLivre", pret.IdLivre);
+            cmd.Parameters.AddWithValue("@idLecteur", pret.IdLecteur);
+            cmd.Parameters.AddWithValue("@dateEmprunt", pret.DatePret);
+            cmd.Parameters.AddWithValue("@dateRetour", pret.DateRetourPret);
+            cmd.Parameters.AddWithValue("@statut", (int)pret.Statut); // Utilise l'énum StatutHistorique de manière parallèle
+
+            cmd.ExecuteNonQuery();
+        }
+        
+        public ObservableCollection<Historique> ObtenirHistorique()
+        {
+            var liste = new ObservableCollection<Historique>();
+
+            using var conn = new NpgsqlConnection(_connectionString);
+            conn.Open();
+
+            string sql = @"
+        SELECT h.id_historique, h.id_livre, h.id_lecteur,
+               h.date_emprunt, h.date_retour, h.statut,
+               l.titre AS titre_livre,
+               le.nom AS nom_lecteur
+        FROM historique h
+        JOIN livres l ON l.id_livre = h.id_livre
+        JOIN lecteurs le ON le.id_lecteur = h.id_lecteur
+        ORDER BY h.date_emprunt DESC";
+
+            using var cmd = new NpgsqlCommand(sql, conn);
+            using var reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                var historique = new Historique
+                {
+                    IdHistorique = reader.GetInt32(0),
+                    IdLivre = reader.GetInt32(1),
+                    IdLecteur = reader.GetInt32(2),
+                    DateEmprunt = reader.GetDateTime(3),
+                    DateRetour = reader.IsDBNull(4) ? null : reader.GetDateTime(4),
+                    Statut = (StatutHistorique)reader.GetInt16(5),
+                    TitreLivre = reader.GetString(6),
+                    NomLecteur = reader.GetString(7)
+                };
+
+                liste.Add(historique);
+            }
+
+            return liste;
+        }
 
     }
 }

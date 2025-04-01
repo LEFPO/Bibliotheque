@@ -188,12 +188,25 @@ namespace bibliothecaire.ViewModel
             try
             {
                 await Application.Current.MainPage.DisplayAlert("Test", "Le bouton fonctionne bien !", "OK");
-                await Shell.Current.GoToAsync(nameof(PretView));
+                await Shell.Current.GoToAsync("//PretView");
+
             }
             catch (Exception ex)
             {
                 await Application.Current.MainPage.DisplayAlert("Erreur", $"Exception : {ex.Message}", "OK");
             }
+        }
+        
+        [RelayCommand]
+        private async Task DeconnexionAsync()
+        {
+            await Shell.Current.GoToAsync("//LoginView"); // Redirection vers la page de connexion
+        }
+
+        [RelayCommand]
+        private async Task OuvrirHistoriqueAsync()
+        {
+            await Shell.Current.GoToAsync("//HistoriqueView"); // Assure-toi que la route est bien dans AppShell
         }
 
     }
